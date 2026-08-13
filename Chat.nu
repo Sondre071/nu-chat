@@ -37,7 +37,7 @@ loop {
 			let response = $line | str substring 6.. | from json
 
 			if $response.type == 'response.output_text.delta' {
-				print --no-newline $response.delta
+				print --no-newline $"(ansi cyan_bold)($response.delta)"
 				$response.delta
 			}
 		}
