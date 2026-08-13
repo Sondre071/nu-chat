@@ -1,4 +1,4 @@
-use modules/get-prompt.nu
+use modules/get-system-prompt.nu
 
 ## Setup
 
@@ -12,7 +12,7 @@ if not ($log_file | path exists) { touch $log_file }
 
 let api_key = open --raw $"($project_dir)/.user/api-key"
 
-#let prompt = get-prompt
+let system_prompt = get-system-prompt
 
 if ($history_path | path exists) { rm $history_path }
 
@@ -20,6 +20,8 @@ if ($history_path | path exists) { rm $history_path }
 ## Main
 
 mut history = []
+
+if ($system_prompt != null) { $history = [{ role: "system", content: $system_prompt }] }
 
 loop {
 	let user_message = input
@@ -39,11 +41,11 @@ loop {
 				$response.delta
 			}
 		}
-	} | compact | str join
+	} | str join
 
 	$history = ($history | append { role: "assistant", content: $assistant_message })
 
-	$"\nAssistant:\n\n($assistant_message)" | save --append $log_file
+	$"\nAssistant:\n\n($assistant_message)\n" | save --append $log_file
 
 	print "\n"
 }
