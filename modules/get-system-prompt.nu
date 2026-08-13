@@ -14,5 +14,5 @@ export def main []: [
 	| where type == file and ($it.name | str ends-with '.md')
 	| get name
 	
-	$files | input list --fuzzy
+	$files | input list --fuzzy -d {|f| $f | path basename}
 }
