@@ -1,4 +1,4 @@
-use modules/get-system-prompt.nu
+use lib/get-system-prompt.nu
 
 ## Setup
 
@@ -7,8 +7,15 @@ const history_path = $project_dir | path join 'history.jsonl'
 
 if not ($project_dir | path join '.user' 'logs' | path exists) { mkdir ($project_dir | path join '.user' 'logs') }
 
-let log_file = $project_dir | path join '.user' 'logs' (date now | format date "%Y-%m-%d_%H:%M:%S")
-if not ($log_file | path exists) { touch $log_file }
+let log_file = $project_dir
+| path join '.user' 'logs' (
+    date now
+    | format date "%Y-%m-%d_%H-%M-%S"
+)
+
+if not ($log_file | path exists) {
+    touch $log_file
+}
 
 let api_key = open --raw $"($project_dir)/.user/api-key"
 
@@ -47,13 +54,11 @@ loop {
 
 	$"\nAssistant:\n\n($assistant_message)\n" | save --append $log_file
 
-	print "\n"
+	print $"(ansi reset)\n"
 }
 
-
-
-def send_message [ history: list<record<role: string, content: string>> ] {
-	let payload = { model: 'google/gemini-3.6-flash', stream: true, input: $history }
+def send_message [ history: table<role: string, content: string> ] {
+	let payload = { model: 'anthropic/claude-sonnet-4.5', stream: true, input: $history }
 
 	$payload | to json -r
 	| http post --headers {
