@@ -13,5 +13,7 @@ export def main [] {
 	| where type == file and ($it.name | str ends-with '.md')
     | input list --fuzzy --display {|dir| $dir.name | path basename }
 
-    $prompt.name | open --raw
+    if $prompt != null {
+        $prompt.name | open --raw
+    }
 }
