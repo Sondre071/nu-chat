@@ -1,11 +1,12 @@
 const project_dir = path self | path dirname
 const logs_dir = $project_dir | path join '.user' 'logs'
 
-$env.api_key = open --raw $"($project_dir)/.user/api-key"
+$env.api_key = open --raw $"($project_dir)/.user/api_key"
 $env.model = 'anthropic/claude-sonnet-4.5'
 $env.log_file = $logs_dir | path join (
     date now | format date "%Y-%m-%d_%H-%M-%S"
 )
+$env.prompts_path_file = $project_dir | path join '.user' 'prompts_path'
 
 if not ($logs_dir | path exists) {
     mkdir $logs_dir
